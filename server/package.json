@@ -1,0 +1,24 @@
+{
+  "name": "mandatory2",
+  "version": "1.0.0",
+  "description": "NodeJS Mandatory 2 Project ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Ignacio Nicolai",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-session": "^1.17.2",
+    "firebase": "^9.6.10",
+    "helmet": "^5.0.2",
+    "node-fetch": "^3.2.3",
+    "nodemailer": "^6.7.3",
+    "sqlite": "^4.0.25",
+    "sqlite3": "^5.0.2"
+  },
+  "type": "module"
+}
