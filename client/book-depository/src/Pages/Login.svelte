@@ -23,6 +23,7 @@
       }),
     });
     const response = await auth.json();
+    console.log(response);
     localStorage.setItem("isLogged", response.authOK);
     localStorage.setItem("email", response.email);
     token.set(localStorage.getItem("isLogged"));

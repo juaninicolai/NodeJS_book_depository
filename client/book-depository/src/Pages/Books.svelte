@@ -6,6 +6,12 @@
   import { Link } from "svelte-navigator";
   import { getNotificationsContext } from "svelte-notifications";
 
+  // onMount(async () => {
+  //   const login = await fetch("http://localhost:3000/auth/login/protected");
+  //   const response = await login.json();
+  //   console.log(response);
+  // });
+
   const logout = () => {
     localStorage.clear();
     token.set(localStorage.getItem("isLogged"));
@@ -20,12 +26,13 @@
   });
 
   const { addNotification } = getNotificationsContext();
-  let cart = [];
 
   function addBookToCart(book) {
-    cart.push(book);
-    localStorage.setItem("cart", JSON.stringify(cart));
-    cartItems.set(JSON.parse(localStorage.getItem("cart")));
+    cartItems.update((cartItems) => {
+      cartItems.push(book);
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      return cartItems;
+    });
 
     addNotification({
       text: `${book.title} added to the cart`,

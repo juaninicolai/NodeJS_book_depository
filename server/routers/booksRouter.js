@@ -5,7 +5,6 @@ import { db } from "../database/createConnection.js";
 //Get all books
 router.get("/", async (req, res) => {
   const books = await db.all("SELECT * FROM books");
-  console.log(books);
   res.send({ data: books });
 });
 

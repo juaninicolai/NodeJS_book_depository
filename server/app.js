@@ -9,8 +9,15 @@ let corsOptions = {
 import cors from "cors";
 app.use(cors(corsOptions));
 
-import helmet from "helmet";
-app.use("/api", helmet());
+import session from "express-session";
+app.use(
+  session({
+    secret: "keyboard cat you should probably change this",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+);
 
 import authRouter from "./routers/authRouter.js";
 app.use("/auth/login", authRouter);
@@ -19,7 +26,6 @@ import booksRouter from "./routers/booksRouter.js";
 app.use("/api/books", booksRouter);
 
 import mailRouter from "./routers/mailRouter.js";
-import session from "express-session";
 app.use("/api/sendmail", mailRouter);
 
 const PORT = process.env.PORT || 3000;

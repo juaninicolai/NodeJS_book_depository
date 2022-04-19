@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+dotenv.config();
+
 import fetch from "node-fetch";
 export const login = async (email, password) => {
   let isAuthorized = false;

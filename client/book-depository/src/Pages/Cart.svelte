@@ -5,6 +5,11 @@
   import { getNotificationsContext } from "svelte-notifications";
   import { navigate } from "svelte-navigator";
 
+  import { onMount } from "svelte";
+  onMount(() => {
+    console.log($cartItems);
+  });
+
   const { addNotification } = getNotificationsContext();
 
   $: booksInCart = [...$cartItems];
@@ -18,7 +23,7 @@
       type: "warning",
       removeAfter: 2000,
     });
-    localStorage.setItem("cart", JSON.stringify(booksInCart));
+    localStorage.setItem("cartItems", JSON.stringify(booksInCart));
   }
 
   //type in your email to get a custom email instead of sending to the test user
@@ -44,14 +49,14 @@
       });
     }
     booksInCart = [];
-    localStorage.setItem("cart", JSON.stringify(booksInCart));
+    localStorage.setItem("cartItems", JSON.stringify(booksInCart));
     navigate("/books");
   }
 </script>
 
 <h2>Cart</h2>
 
-<p><a href="/books">Back to Books</a></p>
+<a on:click={() => navigate("/books")}>Back to Books</a>
 
 <div class="cart-list">
   {#each booksInCart as item (item.id)}
