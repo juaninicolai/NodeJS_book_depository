@@ -1,54 +1,92 @@
 import { Router } from "express";
 const router = Router();
-import { db } from "../database/createConnection.js";
+import { db } from "../database/connectDb.js";
+import { ObjectId } from "mongodb";
 
 //Get all books
-router.get("/", async (req, res) => {
-  const books = await db.all("SELECT * FROM books");
-  res.send({ data: books });
+router.get("/", (req, res) => {
+
+  const page = req.query.page || 0;
+  const booksPerPage = req.query.booksPerPage || 10;
+
+  let books = [];
+
+  db.collection('books')
+      .find()
+      .sort({ author: 1 })
+      .skip(page * booksPerPage)
+      .limit(booksPerPage)
+      .forEach(book => books.push(book))
+      .then(() => {
+          res.status(200).json(books);
+          console.log(books);
+          res.send({ data: books});
+      })
+      .catch(() => {
+          res.status(500).json({error: 'Could not fetch the documents'});
+      }); 
 });
 
-//Get book by id
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  const book = await db.get(`SELECT * FROM books WHERE id = ${id}`);
-  res.send({ data: book });
+router.get("/books/:id", (req,res) => {
+
+  if(ObjectId.isValid(req.params.id)){
+      db.collection('books')
+    .findOne({_id: ObjectId(req.params.id)})
+    .then(doc => {
+        res.status(200).json(doc);
+    })
+    .catch(error => {
+        res.status(500).json({error: 'Could not fetch the document'});
+    });
+  } else {
+      res.status(500).json({error: 'Not a valid document id'});
+  }
 });
 
-//Add a book
-router.post("/", async (req, res) => {
-  const { title, author, genre, price, stock } = req.body;
-  await db.run(
-    `INSERT INTO books (title, author, genre, price, stock) VALUES ('${title}', '${author}', '${genre}', '${price}', '${stock}')`
-  );
-  const book = await db.get(`SELECT * FROM books WHERE title = '${title}'`);
-  res.send({ data: book });
+router.post('/books', (req,res) => {
+  const book = req.body;
+
+  db.collection('books')
+    .insertOne(book)
+    .then(result => {
+        res.status(201).json(result);
+    })
+    .catch(error => {
+        res.status(500).json({error: 'Could not create a new document'});
+    });
 });
 
-//Edit a book by id
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title, author, genre, price, stock } = req.body;
-  await db.run(
-    `UPDATE books SET title = '${title}', author = '${author}', genre = '${genre}', price = '${price}', stock = '${stock}' WHERE id = ${id}`
-  );
-  const book = await db.get(`SELECT * FROM books WHERE id = ${id}`);
-  res.send({ data: book });
+router.delete('/books/:id', (req,res) => {
+
+  if(ObjectId.isValid(req.params.id)){
+      db.collection('books')
+      .deleteOne({_id: ObjectId(req.params.id)})
+      .then(result => {
+          res.status(200).json(result);
+      })
+      .catch(error => {
+          res.status(500).json({error: 'Could not delete the document'});
+      });
+  } else {
+      res.status(500).json({error: 'Not a valid document id'});
+  }
 });
 
-//Delete a book by id
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-  const book = await db.get(`SELECT * FROM books WHERE id = ${id}`);
-  await db.run(`DELETE FROM books WHERE id = ${id}`);
-  res.send({ data: book });
-});
+router.patch('/books/:id', (req,res) => {
+  const updates = req.body;
 
-//Get books by book_genre
-router.get("/genre/:genre", async (req, res) => {
-  const { genre } = req.params;
-  const books = await db.all(`SELECT * FROM books WHERE genre = '${genre}'`);
-  res.send({ data: books });
+  if(ObjectId.isValid(req.params.id)){
+      db.collection('books')
+      .updateOne({_id: ObjectId(req.params.id)}, {$set: updates})
+      .then(result => {
+          res.status(200).json(result);
+      })
+      .catch(error => {
+          res.status(500).json({error: 'Could not delete the document'});
+      });
+  } else {
+      res.status(500).json({error: 'Not a valid document id'});
+  }
 });
 
 export default router;
