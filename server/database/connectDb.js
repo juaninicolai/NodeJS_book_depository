@@ -6,4 +6,6 @@ connectToDb((err) => {
        console.log("Connected to MongoDB");
         db = getDb();
     }
-})
+});
+
+export { db };
