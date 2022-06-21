@@ -9,16 +9,17 @@
   "author": "Juan Ignacio Nicolai",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.17.3",
-    "express-session": "^1.17.2",
     "firebase": "^9.6.11",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.7.0",
+    "mongoose": "^6.4.0",
     "node-fetch": "^3.2.3",
     "nodemailer": "^6.7.3",
-    "sqlite": "^4.0.25",
-    "sqlite3": "^5.0.2"
+    "validator": "^13.7.0"
   },
   "type": "module"
 }
