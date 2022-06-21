@@ -16,7 +16,7 @@
     "firebase": "^9.6.11",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.7.0",
-    "mongoose": "^6.4.0",
+    "mongoose": "^5.13.14",
     "node-fetch": "^3.2.3",
     "nodemailer": "^6.7.3",
     "validator": "^13.7.0"
