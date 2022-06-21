@@ -1,9 +1,9 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: '../.env' });
+dotenv.config();
 import { MongoClient} from 'mongodb';
 
-let dbConnection;
 let uri = process.env.LOCAL_MONGO;
+let dbConnection;
 
 const connectToDb = (callback) => {
         MongoClient.connect(`${uri}`)
