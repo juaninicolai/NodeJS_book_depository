@@ -9,21 +9,11 @@ let corsOptions = {
 import cors from "cors";
 app.use(cors(corsOptions));
 
-import session from "express-session";
-app.use(
-  session({
-    secret: "keyboard cat you should probably change this",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false },
-  })
-);
+// import authRoutes from "./routers/authRoutes.js";
+// app.use("/auth/login", authRoutes);
 
-import authRouter from "./routers/authRouter.js";
-app.use("/auth/login", authRouter);
-
-import booksRouter from "./routers/booksRouter.js";
-app.use("/api/books", booksRouter);
+import booksRoutes from "./routers/booksRoutes.js";
+app.use("/api", booksRoutes);
 
 import mailRouter from "./routers/mailRouter.js";
 app.use("/api/sendmail", mailRouter);
