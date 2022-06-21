@@ -1,86 +1,48 @@
-import { db } from "../database/connectDb.js";
-import { ObjectId } from "mongodb";
+import Book from '../models/book.js';
 
-const get_all_books = ("/books", (req, res) => {
-
-  const page = req.query.page || 0;
-  const booksPerPage = req.query.booksPerPage || 10;
-
-  let books = [];
-
-  db.collection('books')
-      .find()
-      .sort({ author: 1 })
-      .skip(page * booksPerPage)
-      .limit(booksPerPage)
-      .forEach(book => books.push(book))
-      .then(() => {
-          res.status(200).json(books);
-      })
-      .catch(() => {
+export const getAllBooks = async (req, res) => {
+    try {
+        const books = await Book.find();
+        res.status(200).json(books);
+    } catch (error) {
           res.status(500).json({error: 'Could not fetch the documents'});
-      }); 
-});
+    };
+};
 
-const get_book_by_id = ("/books/:id", (req,res) => {
+export const getBookById = async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id);
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).json({error: 'Could not fetch the documents'});
+    }
+};
 
-  if(ObjectId.isValid(req.params.id)){
-      db.collection('books')
-    .findOne({_id: ObjectId(req.params.id)})
-    .then(doc => {
-        res.status(200).json(doc);
-    })
-    .catch(error => {
-        res.status(500).json({error: 'Could not fetch the document'});
-    });
-  } else {
-      res.status(500).json({error: 'Not a valid document id'});
-  }
-});
+export const createBook = async (req, res) => {
+    try {
+        const book = await Book.create(req.body);
+        res.status(201).json(book);
+    } catch (error) {
+        res.status(500).json({error: 'Could not create the document'});
+    }
+};
 
-const create_book = ('/books', (req,res) => {
-  const book = req.body;
+export const updateBook = async (req, res) => {
+    try {
+        const book = await Book.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).json({error: 'Could not update the document'});
+    }
+};
 
-  db.collection('books')
-    .insertOne(book)
-    .then(result => {
-        res.status(201).json(result);
-    })
-    .catch(error => {
-        res.status(500).json({error: 'Could not create a new document'});
-    });
-});
+export const deleteBook = async (req, res) => {
+    try {
+        await Book.findByIdAndDelete(req.params.id);
+        res.status(204).json({message: 'Document deleted'});
+    } catch (error) {
+        res.status(500).json({error: 'Could not delete the document'});
+    }
+};
 
-const delete_book = ('/books/:id', (req,res) => {
-
-  if(ObjectId.isValid(req.params.id)){
-      db.collection('books')
-      .deleteOne({_id: ObjectId(req.params.id)})
-      .then(result => {
-          res.status(200).json(result);
-      })
-      .catch(error => {
-          res.status(500).json({error: 'Could not delete the document'});
-      });
-  } else {
-      res.status(500).json({error: 'Not a valid document id'});
-  }
-});
-
-const update_book = ('/books/:id', (req,res) => {
-  const updates = req.body;
-
-  if(ObjectId.isValid(req.params.id)){
-      db.collection('books')
-      .updateOne({_id: ObjectId(req.params.id)}, {$set: updates})
-      .then(result => {
-          res.status(200).json(result);
-      })
-      .catch(error => {
-          res.status(500).json({error: 'Could not delete the document'});
-      });
-  } else {
-      res.status(500).json({error: 'Not a valid document id'});
-  }
-});
-export default { get_all_books, get_book_by_id, create_book, delete_book, update_book };
+export default Book;

@@ -1,7 +1,7 @@
-import User from '../model/User.js';
+import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
-const handleErrors = (err) => {
+export const handleErrors = (err) => {
     console.log(err.message, err.code);
     let errors = { email: '', password: ''};
 
@@ -28,22 +28,22 @@ const handleErrors = (err) => {
     return errors;
 }
 
-const maxAge = 1 * 24 * 60 * 60;
-const createToken = (id) => {
+export const maxAge = 1 * 24 * 60 * 60;
+export const createToken = (id) => {
     return jwt.sign({ id}, 'secret token', {
         expiresIn: maxAge
     });
 }
 
-const signup_get = (req,res) => {
-    res.render('signup');
+export const signup_get = (req,res) => {
+    
 };
 
-const login_get = (req,res) => {
-    res.render('login');
+export const login_get = (req,res) => {
+   
 };
 
-const signup_post = async (req,res) => {
+export const signup_post = async (req,res) => {
     const { email, password } = req.body;
 
     try{
@@ -57,7 +57,7 @@ const signup_post = async (req,res) => {
     }
 };
 
-const login_post = async (req,res) => {
+export const login_post = async (req,res) => {
     const { email, password } = req.body;
     try {
         const user = await User.login(email, password);
@@ -71,9 +71,9 @@ const login_post = async (req,res) => {
     }
 };
 
-const logout_get = (req,res) => {
+export const logout_get = (req,res) => {
     res.cookie('jwt', '', { maxAge: 1 });
     res.redirect('/');
 }
 console.log("authController loaded");
-export default { signup_get, login_get, signup_post, login_post, logout_get };
+export default User;
