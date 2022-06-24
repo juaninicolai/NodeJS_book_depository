@@ -1,79 +1,81 @@
-import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
-export const handleErrors = (err) => {
-    console.log(err.message, err.code);
-    let errors = { email: '', password: ''};
+export const handleErrors = err => {
+	console.log(err.message, err.code);
+	let errors = { email: "", password: "" };
 
-    //incorrect email
-    if(err.message === 'incorrect email') {
-        errors.email = 'that email is not registered';
-    };
+	//incorrect email
+	if (err.message === "incorrect email") {
+		errors.email = "that email is not registered";
+	}
 
-    //incorrect password
-    if(err.message === 'incorrect password') {
-        errors.email = 'that password is incorrect';
-    };
+	//incorrect password
+	if (err.message === "incorrect password") {
+		errors.email = "that password is incorrect";
+	}
 
-    //duplicate email
-    if(err.code === 11000){
-        errors.email = 'That email is already registered';
-    };
+	//duplicate email
+	if (err.code === 11000) {
+		errors.email = "That email is already registered";
+	}
 
-    if(err.message.includes('user validation failed')){
-       Object.values(err.errors).forEach(({properties}) => {
-           errors[properties.path] = properties.message;
-       });
-    };
-    return errors;
-}
-
-export const maxAge = 1 * 24 * 60 * 60;
-export const createToken = (id) => {
-    return jwt.sign({ id}, 'secret token', {
-        expiresIn: maxAge
-    });
-}
-
-export const signup_get = (req,res) => {
-    
+	if (err.message.includes("user validation failed")) {
+		Object.values(err.errors).forEach(({ properties }) => {
+			errors[properties.path] = properties.message;
+		});
+	}
+	return errors;
 };
 
-export const login_get = (req,res) => {
-   
+const maxAge = 1 * 24 * 60 * 60;
+
+const signToken = id => {
+	return jwt.sign({ id }, process.env.SECRET, {
+		expiresIn: maxAge,
+	});
 };
 
-export const signup_post = async (req,res) => {
-    const { email, password } = req.body;
-
-    try{
-        const user = await User.create({ email, password})
-        const token = createToken(user._id);
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000})
-        res.status(201).json({ user: user._id});
-    } catch (err) {
-        const errors = handleErrors(err);
-        res.status(400).json({ errors });
-    }
+const sendToken = (user, statusCode, res) => {
+	const token = signToken(user._id);
+	const cookieOptions = {
+		expires: new Date(Date.now() + maxAge),
+		httpOnly: true,
+	};
+	res.cookie("jwt", token, cookieOptions);
+	res.status(statusCode).json({
+		user: user._id,
+		email: user.email,
+		token,
+	});
 };
 
-export const login_post = async (req,res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.login(email, password);
-        const token = createToken(user._id);
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000})
-        res.status(200).json({ user : user._id});
-
-    } catch (error) {
-        const errors = handleErrors(error);
-        res.status(400).json({ errors});
-    }
+export const signup_post = async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await User.create({ email, password });
+		sendToken(user, 201, res);
+	} catch (err) {
+		const errors = handleErrors(err);
+		res.status(400).json({ errors });
+	}
 };
 
-export const logout_get = (req,res) => {
-    res.cookie('jwt', '', { maxAge: 1 });
-    res.redirect('/');
-}
-console.log("authController loaded");
+export const login_post = async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await User.login(email, password);
+		sendToken(user, 201, res);
+	} catch (error) {
+		const errors = handleErrors(error);
+		res.status(400).json({ errors });
+	}
+};
+
+export const logout_get = (req, res) => {
+	res.cookie("jwt", "", { maxAge: 1 });
+	res.redirect("/");
+};
+
 export default User;
