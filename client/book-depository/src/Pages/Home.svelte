@@ -1,14 +1,17 @@
 <script>
-  import { Link } from "svelte-navigator";
-  import Genre from "../Pages/Genres.svelte";
+import About from "./About.svelte";
+
+import Books from "./Books.svelte";
+import { user } from '../Stores/bookStore.js';
 </script>
 
-<h2>👋 Welcome to the home page</h2>
+{#if $user === null}
+<h2>👋 Welcome, guest</h2>
+{:else}
+<h2>👋 Welcome, {$user}</h2>
+{/if}
 
-<h4>Buy our books <Link to="/books">here</Link></h4>
-
-<p>Find books by genre 👇</p>
-<Genre />
+<Books/>
 
 <style>
   h2 {

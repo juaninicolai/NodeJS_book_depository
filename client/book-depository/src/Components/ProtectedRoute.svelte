@@ -7,6 +7,7 @@
   export let component;
 
   $: isAuthorized = $token;
+  console.log(isAuthorized);
 </script>
 
 {#if isAuthorized}

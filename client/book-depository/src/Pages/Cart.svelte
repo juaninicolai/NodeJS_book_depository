@@ -29,37 +29,16 @@
   //type in your email to get a custom email instead of sending to the test user
   let email = localStorage.getItem("email");
 
-  async function submitOrder() {
-    let order = await fetch($baseURL + "/api/sendmail", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        subject: "Confirmation order",
-        message: `You have bought: ${JSON.stringify(booksInCart)}`,
-      }),
-    });
-    let response = await order.json();
-    if (response === true) {
-      addNotification({
-        text: "Thank you for your order, you will recieve a confirmation email soon.",
-        position: "top-center",
-        type: "success",
-        removeAfter: 2000,
-      });
-    }
-    booksInCart = [];
-    localStorage.setItem("cartItems", JSON.stringify(booksInCart));
-    navigate("/books");
+
+  function checkout() {
+    navigate("/checkout")
   }
 </script>
 
 <h2>Cart</h2>
 
-<a on:click={() => navigate("/books")}>Back to Books</a>
-
 <div class="cart-list">
-  {#each booksInCart as item (item.id)}
+  {#each booksInCart as item (item._id)}
     <Card>
       <div>
         <h4>{item.title}</h4>
@@ -75,8 +54,14 @@
     </Card>
   {/each}
 </div>
+<br>
 
-<Button order="secondary" on:click={submitOrder}>Pay</Button>
+{#if booksInCart.length > 0}
+<Button order="secondary" on:click={checkout}>Proceed to checkout</Button>
+{:else}
+<h3>The cart is empty</h3>
+<h4><a href="/">Shop today's deals</a></h4>
+{/if}
 
 <style>
   h2 {
@@ -89,7 +74,7 @@
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content:space-around;
     align-items: center;
   }
 </style>
