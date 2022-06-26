@@ -1,39 +1,49 @@
 <script>
-  import { baseURL, cartItems, token } from "../Stores/bookStore.js";
+  import { baseURL, cartItems } from "../Stores/bookStore.js";
   import { onMount } from "svelte";
   import Button from "../Shared/Button.svelte";
   import Card from "../../src/Shared/Card.svelte";
   import { getNotificationsContext } from "svelte-notifications";
+  import { io } from "socket.io-client";
 
-  let books = [];
+  $: books = [];
   let filteredBooks = [];
-  let bookGenre = "All";
-  let emptyList = "There are no books with this genre";
-  let response;
+  let bookGenre;
+  let emptyList = "Sorry, there are no books with the genre"
 
   onMount(async () => {
     const response = await fetch($baseURL + "/api");
     const { data } = await response.json();
     books = data;
+    const socket = io("https://bookdepository.herokuapp.com");
+    socket.on("updateInventory", () => {
+      getBookGenre();
+    });
   });
 
   async function getBookGenre() {
     if (bookGenre === "All") {
-      response = await fetch($baseURL + "/api");
+      const response = await fetch($baseURL + "/api", {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Credentials: "include",
+        }
+      });
       const { data } = await response.json();
       return books = data;
      } else {
       filteredBooks = books.filter((book) => book.genre === bookGenre);
       books = filteredBooks;
-     } 
+     }
   }
 
   const { addNotification } = getNotificationsContext();
+
   function addBookToCart(book) {
     cartItems.update((cartItems) => {
       cartItems.push(book);
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      console.log(cartItems);
       return cartItems;
     });
 
@@ -60,19 +70,25 @@
   </select>
   <button>Filter</button>
 </form>
-
+<br>
 <div class="list">
   {#each books as book (book._id)}
     {#if books.length === 0}
       <h3>{emptyList}</h3>
     {:else}
       <Card>
-        <div>
-          <h4>{book.title}</h4>
+        <div style="font-size: 15px;">
+          <h4 style="font-size: 20px;">{book.title}</h4>
           <p>Author: {book.author}</p>
           <p>Genre: {book.genre}</p>
-          <p>Price: {book.price} DKK</p>
+          <p id="price">{book.price} DKK</p>
+          {#if book.inventory === undefined}
+          <p>Inventory: 0</p>
+          {:else}
+          <p>Inventory: {book.inventory}</p>
+          {/if}
         </div>
+        {#if book.inventory > 0}
         <div class="buy">
           <Button
             order="secondary"
@@ -81,6 +97,9 @@
             }}>Add to Cart</Button
           >
         </div>
+        {:else}
+        <p style="color:red">Out of stock</p>
+        {/if}
       </Card>
     {/if}
   {/each}
@@ -93,5 +112,9 @@
     flex-wrap: wrap;
     justify-content:space-around;
     align-items: center;
+  }
+
+  #price {
+    color: green;
   }
 </style>

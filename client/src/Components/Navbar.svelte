@@ -7,38 +7,45 @@
   import Home from "../Pages/Home.svelte";
   import Cart from "../Pages/Cart.svelte";
   import Checkout from "../Pages/Checkout.svelte";
-  import { user } from '../Stores/bookStore.js';
-
-  const logout = () => {
-    localStorage.clear();
-    navigate("/");
-    window.location.reload();
+  import { baseURL, token, user } from '../Stores/bookStore.js';
+  
+  const logout = async () => {
+    await fetch($baseURL + "/auth/logout")
+    .then(res => {
+      if(res.status === 200){
+        document.cookie = `jwt= \" \" `;
+        token.set(null);
+        user.set(null);
+      }
+      window.location.reload();
+    });
+    
   };
 </script>
 
 <Router>
   <nav>
-    <ul>
+    <ul >
       <li>
-        <Link to="/">Home |</Link>
+        <Link to="/" style="text-decoration: none">Home |</Link>
       </li>
       <li>
-        <Link to="/about">About |</Link>
+        <Link to="/about" style="text-decoration: none">About |</Link>
       </li>
       {#if $user === null }
       <li>
-        <Link to="/login">Log in |</Link>
+        <Link to="/login" style="text-decoration: none">Log in |</Link>
       </li>
       <li>
-        <Link to="/signup">Sign up |</Link>
+        <Link to="/signup" style="text-decoration: none">Sign up |</Link>
       </li>
       {:else}
       <li>
-        <Link to="/" on:click={logout}>Logout |</Link>
+        <Link to="/" on:click={logout} style="text-decoration: none">Logout |</Link>
       </li>
       {/if}
       <li>
-        <Link to="/cart">Cart</Link>
+        <Link to="/cart" style="text-decoration: none">Cart</Link>
       </li>
     </ul>
   </nav>
@@ -60,6 +67,7 @@
     text-decoration: none;
     list-style-type: none;
   }
+
   li {
     margin-right: 5px;
   }

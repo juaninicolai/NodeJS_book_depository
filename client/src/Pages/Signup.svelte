@@ -1,6 +1,6 @@
 <script>
   import { useNavigate } from "svelte-navigator";
-  import { baseURL, user } from "../Stores/bookStore.js";
+  import { baseURL, user, token } from "../Stores/bookStore.js";
 
     let email;
     let password;
@@ -15,6 +15,7 @@
         const auth = await fetch($baseURL + "/auth/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify({
             email,
             password,
@@ -29,10 +30,9 @@
         };
 
         if (data.user) {
-            console.log(data.user);
-            localStorage.setItem('user', data.email);
-            user.set(localStorage.getItem('user'));
-            console.log($user);
+            user.set(data.email);
+            token.set(data.token);
+            document.cookie = `jwt=${data.token}`;
             navigate("/");
         };
   };

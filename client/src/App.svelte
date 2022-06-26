@@ -2,6 +2,7 @@
   import Footer from "./Components/Footer.svelte";
   import Notifications from "svelte-notifications";
   import Navbar from "./Components/Navbar.svelte";
+
 </script>
 
 <Notifications>

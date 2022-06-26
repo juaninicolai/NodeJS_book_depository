@@ -1,17 +1,16 @@
 <script>
   import { Route } from "svelte-navigator";
-  import AccessDenied from "../Pages/AccessDenied.svelte";
+  import Login from "../Pages/Login.svelte";
   import { token } from "../Stores/bookStore.js";
 
   export let path;
   export let component;
 
   $: isAuthorized = $token;
-  console.log(isAuthorized);
 </script>
 
-{#if isAuthorized}
+{#if isAuthorized === true}
   <Route {path} {component} />
 {:else}
-  <Route {path} component={AccessDenied} />
+  <Route {path} component={Login} />
 {/if}

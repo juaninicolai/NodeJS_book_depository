@@ -32,7 +32,7 @@ export const handleErrors = err => {
 const maxAge = 86400000;
 
 const signToken = id => {
-	return jwt.sign({ id }, 'secrettokensecrettokensecrettoken', {
+	return jwt.sign({ id }, process.env.SECRET_TOKEN, {
 		expiresIn: maxAge,
 	});
 };
