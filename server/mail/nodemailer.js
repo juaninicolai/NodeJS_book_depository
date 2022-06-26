@@ -24,10 +24,8 @@ export const sendMail = async (email, subject, message) => {
   return new Promise((resolve, reject) => {
     transporter.sendMail(options, (err, info) => {
       if (err) {
-        console.log(err);
         resolve(false);
       }
-      console.log(info);
       resolve(true);
     });
   });

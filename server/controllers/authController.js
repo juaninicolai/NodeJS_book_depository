@@ -13,7 +13,7 @@ export const handleErrors = err => {
 
 	//incorrect password
 	if (err.message === "incorrect password") {
-		errors.email = "that password is incorrect";
+		errors.password = "that password is incorrect";
 	}
 
 	//duplicate email
@@ -29,10 +29,10 @@ export const handleErrors = err => {
 	return errors;
 };
 
-const maxAge = 1 * 24 * 60 * 60;
+const maxAge = 86400000;
 
 const signToken = id => {
-	return jwt.sign({ id }, process.env.SECRET, {
+	return jwt.sign({ id }, 'secrettokensecrettokensecrettoken', {
 		expiresIn: maxAge,
 	});
 };
@@ -40,8 +40,8 @@ const signToken = id => {
 const sendToken = (user, statusCode, res) => {
 	const token = signToken(user._id);
 	const cookieOptions = {
-		expires: new Date(Date.now() + maxAge),
-		httpOnly: true,
+		maxAge: maxAge,
+		secure: false,
 	};
 	res.cookie("jwt", token, cookieOptions);
 	res.status(statusCode).json({
@@ -67,15 +67,14 @@ export const login_post = async (req, res) => {
 	try {
 		const user = await User.login(email, password);
 		sendToken(user, 201, res);
-	} catch (error) {
-		const errors = handleErrors(error);
+	} catch (err) {
+		const errors = handleErrors(err);
 		res.status(400).json({ errors });
 	}
 };
 
 export const logout_get = (req, res) => {
-	res.cookie("jwt", "", { maxAge: 1 });
-	res.redirect("/");
+	res.status(200).send();
 };
 
 export default User;

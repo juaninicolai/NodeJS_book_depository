@@ -6,11 +6,26 @@ let corsOptions = {
 	origin: ["http://localhost:8080"],
 	credentials: true,
 };
+
 import cors from "cors";
 app.use(cors(corsOptions));
 
 import cookieParser from "cookie-parser";
 app.use(cookieParser());
+
+import http from "http";
+const httpServer = http.createServer(app);
+
+import { Server } from "socket.io";
+const io = new Server(httpServer, {
+	cors: corsOptions,
+});
+
+io.on("connection", (socket) => {
+	socket.on("reduceInventory", () => {
+		io.emit("updateInventory");
+	});
+});
 
 import authRoutes from "./routes/authRoutes.js";
 app.use("/auth", authRoutes);
@@ -35,6 +50,6 @@ mongoose
 	.catch(err => console.log(err));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
 	console.log(`Server is listening on port ${PORT}`);
 });
