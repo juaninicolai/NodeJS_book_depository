@@ -1,6 +1,7 @@
 # NodeJS-book-depository
 
 HOSTED REST API: https://bookdepository.herokuapp.com/api
+
 HOSTED SVELTE FRONTEND: http://bookdepository.surge.sh
 
 main branch: book ecommerce project #2 for school.
