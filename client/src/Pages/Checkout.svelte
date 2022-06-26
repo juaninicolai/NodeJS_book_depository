@@ -4,6 +4,7 @@
   import { navigate } from "svelte-navigator";
   import { io } from "socket.io-client";
   import { getNotificationsContext } from "svelte-notifications";
+  import "dotenv/congif";
 
   
   const { addNotification } = getNotificationsContext();
@@ -65,7 +66,7 @@
     // calculateTotal();
     // showBookTitles();
 
-    const socket = io("https://bookdepository.herokuapp.com");
+    const socket = io("http://localhost:3000" || process.env.BASE_URL);
     socket.emit("reduceInventory");
 
     cartItems.update((cartItems) => {

@@ -15,7 +15,7 @@
     const response = await fetch($baseURL + "/api");
     const { data } = await response.json();
     books = data;
-    const socket = io("https://bookdepository.herokuapp.com");
+    const socket = io("http://localhost:3000" || process.env.BASE_URL);
     socket.on("updateInventory", () => {
       getBookGenre();
     });
