@@ -1,7 +1,6 @@
 import { writable } from "svelte/store";
-import "dotenv/config";
 
-export const baseURL = writable("http://localhost:3000" || process.env.BASE_URL);
+export const baseURL = writable("http://localhost:3000");
 
 export const token = writable(false);
 

@@ -15,7 +15,7 @@
     const response = await fetch($baseURL + "/api");
     const { data } = await response.json();
     books = data;
-    const socket = io("http://localhost:3000" || process.env.BASE_URL);
+    const socket = io("http://localhost:3000");
     socket.on("updateInventory", () => {
       getBookGenre();
     });

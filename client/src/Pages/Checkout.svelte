@@ -4,7 +4,6 @@
   import { navigate } from "svelte-navigator";
   import { io } from "socket.io-client";
   import { getNotificationsContext } from "svelte-notifications";
-  import "dotenv/congif";
 
   
   const { addNotification } = getNotificationsContext();
@@ -66,7 +65,7 @@
     // calculateTotal();
     // showBookTitles();
 
-    const socket = io("http://localhost:3000" || process.env.BASE_URL);
+    const socket = io("http://localhost:3000");
     socket.emit("reduceInventory");
 
     cartItems.update((cartItems) => {
