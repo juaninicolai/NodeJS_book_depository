@@ -3,7 +3,7 @@ const app = express();
 app.use(express.json());
 
 let corsOptions = {
-	origin: "http://localhost:8080" || process.env.CORS_ORIGIN,
+	origin: "http://localhost:8080",
 	credentials: true,
 };
 
