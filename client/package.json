@@ -5,8 +5,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public --single",
-    "deploy": "rollup -c; surge public"
+    "start": "sirv public --single"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -26,7 +25,6 @@
     "svelte-notifications": "^0.9.93"
   },
   "type": "module",
-  "description": "*Psst — looking for a more complete solution? Check out [SvelteKit](https://kit.svelte.dev), the official framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.*",
   "main": "rollup.config.js",
   "author": "",
   "license": "ISC"
